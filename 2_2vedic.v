@@ -19,7 +19,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
 module VedicMultiplier_2x2 (
   input [1:0] multiplicand,
   input [1:0] multiplier,
@@ -38,12 +37,12 @@ module VedicMultiplier_2x2 (
   wire [2:0] peres_outputs1;
   assign peres_outputs1[0] = multiplier[1];
   assign peres_outputs1[1] = bvpgg_outputs[0] ;
-  assign peres_outputs1[2] = (multiplicand[0]& bvpgg_outputs[1])^1'b0;
+  assign peres_outputs1[2] = (multiplier[1]& bvpgg_outputs[1])^1'b0;
   
    wire [2:0] peres_outputs2;
   assign peres_outputs2[0] =bvpgg_outputs[0];
   assign peres_outputs2[1] =  bvpgg_outputs[0];
-  assign peres_outputs2[2] = (bvpgg_outputs[3] & multiplier[1])^1'b0;
+  assign peres_outputs2[2] = (bvpgg_outputs[3] &  peres_outputs1[0])^1'b0;
   
    wire [2:0] peres_outputs3;
   assign peres_outputs3[0] =  bvpgg_outputs[0];
