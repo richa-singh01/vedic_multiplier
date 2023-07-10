@@ -19,31 +19,51 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module KoggeStoneAdder(
-  input wire [7:0] a,
-  input wire [7:0] b,
-  input wire cin,
-  output wire [7:0] sum,
-  output wire cout
-);
+module KSA_8bit(input [7:0] a, input [7:0] b,output [8:0] s);
+wire [47:0] w;
+wire [6:0] c;
+Peres p1(a[0],b[0],0,,w[1],w[0]);
+Peres p2(a[1],b[1],0,,w[3],w[2]);
+Peres p3(a[2],b[2],0,,w[5],w[4]);
+Peres p4(a[3],b[3],0,,w[7],w[6]);
+Peres p5(a[4],b[4],0,,w[9],w[8]);
+Peres p6(a[5],b[5],0,,w[11],w[10]);
+Peres p7(a[6],b[6],0,,w[13],w[12]);
+Peres p8(a[7],b[7],0,,w[15],w[14]);
 
-  wire [7:0] p, g, c;
-  wire [7:0] pp, gg, cp;
+green_cell g1(w[1],w[0],w[17],w[16]);
+yellow_cell y1(w[3],w[2],w[1],w[0],w[19],w[18]);
+yellow_cell y2(w[5],w[4],w[3],w[2],w[21],w[20]);
+yellow_cell y3(w[7],w[6],w[5],w[4],w[23],w[22]);
+yellow_cell y4(w[9],w[8],w[7],w[6],w[25],w[24]);
+yellow_cell y5(w[11],w[10],w[9],w[8],w[27],w[26]);
+yellow_cell y6(w[13],w[12],w[11],w[10],w[29],w[28]);
+yellow_cell y7(w[15],w[14],w[13],w[12],w[31],w[30]);
 
-  assign {pp[0], gg[0], cp[0]} = {a[0] ^ b[0], a[0] & b[0], cin};
+green_cell g2(w[17],w[16],w[33] ,w[32]);
+green_cell g3(w[19],w[18],w[35],w[34]);
+yellow_cell y8(w[21],w[20],w[17],w[16],w[37],w[36]);
+yellow_cell y9(w[23],w[22],w[19],w[18],w[39],w[38]);
+yellow_cell y10(w[25],w[24],w[21],w[20],w[41],w[40]);
+yellow_cell y11(w[27],w[26],w[23],w[22],w[43],w[42]);
+yellow_cell y12(w[29],w[28],w[25],w[24],w[45],w[44]);
+yellow_cell y13(w[31],w[30],w[27],w[26],w[47],w[46]);
 
-  assign {p[0], g[0], c[0]} = {pp[0], gg[0], cp[0]};
-  
-  genvar i;
-  
-  generate
-    for (i = 1; i < 8; i = i + 1) begin
-      assign {pp[i], gg[i], cp[i]} = {a[i] ^ b[i] ^ g[i - 1], (a[i] & b[i]) | ((a[i] ^ b[i]) & g[i - 1]), (a[i] & b[i]) | ((a[i] ^ b[i]) & cp[i - 1])};
-      assign {p[i], g[i], c[i]} = {pp[i] ^ (g[i - 1] & cp[i - 1]), gg[i] & cp[i - 1], gg[i] | (p[i] & cp[i - 1])};
-    end
-  endgenerate
-  
-  assign sum = {p[7], p[6], p[5], p[4], p[3], p[2], p[1], p[0]};
-  assign cout = c[7];
+green_cell g4(w[33],w[32], ,c[0]);
+green_cell g5(w[35],w[34], ,c[1]);
+green_cell g6(w[37],w[36], ,c[2]);
+green_cell g7(w[39],w[38], ,c[3]);
+yellow_cell y14(w[41],w[40],w[33],w[32], ,c[4]);
+yellow_cell y15(w[43],w[42],w[35],w[34], ,c[5]);
+yellow_cell y16(w[45],w[44],w[37],w[36], ,c[6]);
+yellow_cell y17(w[47],w[46],w[39],w[38], ,s[8]);
 
+CNOT c1(w[1],0, ,s[0]);  
+CNOT c2(w[3],c[0], ,s[1]);  
+CNOT c3(w[5],c[1], ,s[2]);
+CNOT c4(w[7],c[2], ,s[3]);
+CNOT c5(w[9],c[3], ,s[4]);  
+CNOT c6(w[11],c[4], ,s[5]);
+CNOT c7(w[13],c[5], ,s[6]);
+CNOT c8(w[15],c[6], ,s[7]);  
 endmodule
