@@ -1,0 +1,68 @@
+`timescale 1ns / 1ps
+
+module Toffoli(A,B,C,P,Q,R);
+input A,B,C;
+output P,Q,R;
+assign P= A;
+assign Q= B;
+assign R = (A&B)^C;
+endmodule
+
+module UPG(A,B,C,P,Q,R);
+input A,B,C;
+output P,Q,R;
+assign P= A;
+assign Q= (A|B)^C;
+assign R = (A&B)^C;
+endmodule
+
+module CNOT(A,B,P,Q);
+input A,B;
+output P,Q;
+assign P= A;
+assign Q= A^B;
+endmodule
+
+module Double_Feynman(A,B,C,P,Q,R);
+input A,B,C;
+output P,Q,R;
+assign P= A;
+assign Q= A^B;
+assign R = A^C;
+endmodule
+
+module Peres(A,B,C,P,Q,R);
+input A,B,C;
+output P,Q,R;
+assign P= A;
+assign Q= A^B;
+assign R = (A&B)^C;
+endmodule
+
+module BVPPG(A,B,C,D,E,P,Q,R,S,T);
+input A,B,C,D,E;
+output P,Q,R,S,T;
+assign P= A;
+assign Q= B;
+assign R = (A&B)^C;
+assign S = D;
+assign T =(A&D)^E;
+endmodule
+
+module HNG(A,B,C,D,P,Q,R,S);       //Hagparast-Navi(HNG) Gate
+input A,B,C,D;
+output P,Q,R,S;
+assign P= A;
+assign Q= B;
+assign R = (A^B)^C;
+assign S = ((A^B)&C)^((A&B)^D);
+endmodule
+
+module MRG(A,B,C,D,P,Q,R,S);       //Morrison-Ranganathan Gate
+input A,B,C,D;
+output P,Q,R,S;
+assign P= A;
+assign Q= A^B;
+assign R = (A^B)^C;
+assign S = ((A^B)^C)^((A&B)^D);
+endmodule
