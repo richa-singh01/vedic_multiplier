@@ -19,63 +19,15 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+module Vedic_4bit(input [3:0] a, input [3:0] b,output [7:0] q);
+wire [24:0]w;
+Vedic_2bit v1(a[1:0],b[1:0],{w[1:0],q[1:0]});
+Vedic_2bit v2(a[1:0],b[3:2],w[5:2]);
+Vedic_2bit v3(a[3:2],b[1:0],w[9:6]);
+Vedic_2bit v4(a[3:2],b[3:2],w[13:10]);
 
-module VedicMultiplier_4x4 (
-  input [3:0] multiplicand,
-  input [3:0] multiplier,
-  output [7:0] product
-);
-
-  // Intermediate signals
-  wire [3:0] partial_products [3:0];
-  wire [3:0] sumA;
-  wire C1;
-  wire [3:0] sumB;
-  wire C2;
-  wire [3:0] sumC;
-  wire C3;
-  wire cin1 =0;
-  wire cin2=0;
-  wire cin3=0;
-
-  // Generate partial products using 2x2 Vedic multipliers
-  VedicMultiplier_2x2 multiplier_00 (
-    . multiplicand(multiplicand[1:0]),
-    .multiplier(multiplier[1:0]),
-    . product(partial_products[0])
-  );
-  VedicMultiplier_2x2 multiplier_01 (
-    . multiplicand(multiplicand[3:2]),
-    .multiplier(multiplier[3:2]),
-    . product(partial_products[1])
-  );
-  VedicMultiplier_2x2 multiplier_10 (
-    . multiplicand(multiplicand[1:0]),
-    .multiplier(multiplier[3:2]),
-    . product(partial_products[2])
-  );
-  VedicMultiplier_2x2 multiplier_11 (
-    .multiplicand(multiplicand[3:2]),
-    .multiplier(multiplier[1:0]),
-    . product(partial_products[3])
-  );
-
-  // Kogge-Stone Adder (4-bit)
-  KoggeStoneAdder_4bit adder_1 (
-    .inputA(partial_products[1]),.inputB(partial_products[2]),.cin(cin1),
-    .sum(sumA),.cout(C1)
-  );
-   KoggeStoneAdder_4bit adder_2(
-    .inputA(sumA),.inputB({2'b00,partial_products[0][3:2]}),.cin(cin2),
-    .sum(sumB),.cout(C2)
-  );
-   KoggeStoneAdder_4bit adder_3 (
-    .inputA(partial_products[3]),.inputB({C1,C2,sumB[3:2]}),.cin(cin3),
-    .sum(sumC),.cout(C3)
-  );
-
-  // Output
-  assign product[1:0] = partial_products[0][1:0];
-  assign product[3:2] = sumB[1:0];
-  assign product[7:4] = sumC;
+KSA_4bit k1(w[5:2], w[9:6],w[18:14]);
+KSA_4bit k2({0,0,w[1:0]}, w[17:14],{w[21:19],q[3:2]});
+Peres p1(w[18],w[21],0,,w[22],w[23]);
+KSA_4bit k3({w[23:22],w[20:19]}, w[13:10],{w[24],q[7:4]});
 endmodule
