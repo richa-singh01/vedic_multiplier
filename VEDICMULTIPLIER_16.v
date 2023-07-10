@@ -19,55 +19,17 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+module Vedic_16bit(input [15:0] a, input [15:0] b,output [31:0] q);
+wire [83:0] w;
+Vedic_8bit v1(a[7:0],b[7:0],{w[7:0],q[7:0]});
+Vedic_8bit v2(a[7:0],b[15:8],w[23:8]);
+Vedic_8bit v3(a[15:8],b[7:0],w[39:24]);
+Vedic_8bit v4(a[15:8],b[15:8],w[55:40]);
 
-module VEDICMULTIPLIER_16(
-input [15:0] multiplicand,
-  input [15:0] multiplier,
-  output [31:0] product
-    );
-    
-    wire [15:0]partial_productA;
-    wire [15:0]partial_productB;
-    wire [15:0]partial_productC;
-    wire [15:0]partial_productD;
-    wire [15:0]sumA;
-    wire [15:0] sumB;
-    wire [15:0]sumC;
-    wire cin1=0;
-    wire cin2=0;
-    wire cin3=0;
-    wire C1;
-    wire C2;
-    wire C3;
-    
-    
-     VEDICMULTIPLIER_8 multiplier_00 (
-    . multiplicand(multiplicand[7:0]),
-    .multiplier(multiplier[7:0]),
-    . product(partial_productA)
-  );
-    VEDICMULTIPLIER_8 multiplier_01 (
-    . multiplicand(multiplicand[15:8]),
-    .multiplier(multiplier[7:0]),
-    . product(partial_productB)
-  );
-   VEDICMULTIPLIER_8 multiplier_10 (
-    . multiplicand(multiplicand[7:0]),
-    .multiplier(multiplier[15:8]),
-    . product(partial_productC)
-  );
-    VEDICMULTIPLIER_8 multiplier_11 (
-    . multiplicand(multiplicand[15:8]),
-    .multiplier(multiplier[15:8]),
-    . product(partial_productD)
-  );
-    
-    
-    KoggeStoneAdder_16 ADD1(.a(partial_productB),.b(partialproductC),.cin(cin1),.sum(sumA),.cout(C1));
-    KoggeStoneAdder_16 ADD2(.a(sumA),.b({8'b00000000,partial_productA[15:8]}),.cin(cin2),.sum(sumB),.cout(C2));
-    KoggeStoneAdder_16 ADD3(.a(partial_productD),.b({C1,7'B0000000,sumB[15:8]}),.cin(cin3),.sum(sumC),.cout(C3));
-    
-    assign product[7:0] = partial_productA[7:0];
-    assign product[15:8] = sumB[7:0];
-    assign product[31:16] = sumC;
+KSA_16bit k1(w[23:8],w[39:24],w[72:56]);
+KSA_16bit k2(w[71:56],{0,0,0,0,0,0,0,0,w[7:0]},{w[81:73],q[15:8]});
+UPG u1(w[72],w[81],0, ,w[82], );
+KSA_16bit k3(w[55:40],{0,0,0,0,0,0,0,w[82],w[80:73]},{w[83],q[31:16]});
 endmodule
+
+
