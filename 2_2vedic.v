@@ -19,49 +19,13 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module VedicMultiplier_2x2 (
-  input [1:0] multiplicand,
-  input [1:0] multiplier,
-  output [3:0] product
-);
 
-  // BVPGG (Balanced Variable Precision Gray Gates)
-  wire [4:0] bvpgg_outputs;
-  assign bvpgg_outputs[1] = multiplicand[0] ;
-  assign bvpgg_outputs[2] = (multiplicand[0] & multiplier[0])^1'b0;
-   assign bvpgg_outputs[0] =  multiplier[0];
-  assign bvpgg_outputs[3] = multiplicand[1];
-   assign bvpgg_outputs[4] = (multiplicand[1] & multiplier[0])^1'b0;
+module Vedic_2bit(input [1:0] a, input [1:0] b,output [3:0] q);
+wire I1,I2,I3,g,gbar,g1,g2,g3;
 
-  // Peres gates
-  wire [2:0] peres_outputs1;
-  assign peres_outputs1[0] = multiplier[1];
-  assign peres_outputs1[1] = bvpgg_outputs[0] ;
-  assign peres_outputs1[2] = (multiplier[1]& bvpgg_outputs[1])^1'b0;
-  
-   wire [2:0] peres_outputs2;
-  assign peres_outputs2[0] =bvpgg_outputs[0];
-  assign peres_outputs2[1] =  bvpgg_outputs[0];
-  assign peres_outputs2[2] = (bvpgg_outputs[3] &  peres_outputs1[0])^1'b0;
-  
-   wire [2:0] peres_outputs3;
-  assign peres_outputs3[0] =  bvpgg_outputs[0];
-  assign peres_outputs3[1] = bvpgg_outputs[4]^ peres_outputs1[2];
-  assign peres_outputs3[2] = (bvpgg_outputs[4]& peres_outputs1[2])^1'b0;
-
-
-  // Feynman gates
-  wire [1:0] feynman_outputs;
-  assign feynman_outputs[0] =  peres_outputs3[2];
-
-  assign feynman_outputs[1] = peres_outputs3[2]^peres_outputs2[2];
-
- 
-
-  // Output
-  assign product[0] = bvpgg_outputs[2];
-   assign product[1] = peres_outputs3[1];
-    assign product[2] = feynman_outputs[0];
-     assign product[3] =  feynman_outputs[1];
-
+BVPPG b1(a[0],b[0],0,b[1],0,g,I1,q[0],I2,g1);
+Peres p1(a[1],I1,0,I3,g,g2);
+Peres p2(I3,I2,0,g,gbar,g3);
+Peres p3(g1,g2,0,g,q[1],g4);
+CNOT c1(g4,g3,q[3],q[2]);
 endmodule
