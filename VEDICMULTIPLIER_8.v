@@ -20,60 +20,15 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module VEDICMULTIPLIER_8(
-input [7:0] multiplicand,
-  input [7:0] multiplier,
-  output [15:0] product
-    );
-    
-    wire [7:0] partial_productA;
-     wire [7:0] partial_productB;
-      wire [7:0] partial_productC;
-       wire [7:0] partial_productD;
-       wire [7:0] sumA;
-       wire cin1 =0;
-       wire C1;
-        wire [11:0] sumb;
-       wire cin2=0 ;
-       wire C2;
-         wire [11:0] sumC;
-       wire cin3=0 ;
-       wire C3;
-    
-    
-    VedicMultiplier_4x4 multiplier_00 (
-    . multiplicand(multiplicand[3:0]),
-    .multiplier(multiplier[3:0]),
-    . product(partial_productA)
-  );
-  
-   
-    VedicMultiplier_4x4 multiplier_01 (
-    . multiplicand(multiplicand[3:0]),
-    .multiplier(multiplier[7:4]),
-    . product(partial_productB)
-  );
-  
-   
-    VedicMultiplier_4x4 multiplier_10 (
-    . multiplicand(multiplicand[7:4]),
-    .multiplier(multiplier[3:0]),
-    . product(partial_productC)
-  );
-  
-   
-    VedicMultiplier_4x4 multiplier_11 (
-    . multiplicand(multiplicand[7:4]),
-    .multiplier(multiplier[7:4]),
-    . product(partial_productD)
-  );
-  
-   KoggeStoneAdder ADD1(.a({4'b0000,partial_productA[7:4]}),.b(partial_productB),.cin(cin1),.sum(sumA),.cout(C1));
-    KoggeStoneAdder_12 ADD2(.a({4'b0000,partial_productC}),.b({partial_productD,4'b0000}),.cin(cin2),.sum(sumB),.cout(C2));
-     KoggeStoneAdder_12 ADD3(.a({4'b0000,sumA}),.b(sumB),.cin(cin3),.sum(sumC),.cout(C3));
-     
-     //OUTPUT 
-     assign product[3:0] = partial_productA[3:0];
-     assign product [15:4] = sumC;
-     
+module Vedic_8bit(input [7:0] a, input [7:0] b,output [15:0] q);
+wire [43:0] w;
+Vedic_4bit v1(a[3:0],b[3:0],{w[3:0],q[3:0]});
+Vedic_4bit v2(a[7:4],b[3:0],w[11:4]);
+Vedic_4bit v3(a[3:0],b[7:4],w[19:12]);
+Vedic_4bit v4(a[7:4],b[7:4],w[27:20]);
+
+KSA_8bit k1(w[19:12],w[11:4],w[36:28]);
+KSA_8bit k2(w[35:28],{0,0,0,0,w[3:0]},{w[41:37],q[7:4]});
+UPG u1(w[36],w[41],0, ,w[42], );
+KSA_8bit k3(w[27:20],{0,0,0,w[42],w[40:37]},{w[43],q[15:8]});
 endmodule
